@@ -1,25 +1,29 @@
-﻿using Helper.Methods;
-using K205Oleev.Areas.admin.ViewModel;
-using K205Oleev.Data;
+﻿using DataAccess;
 using Entities;
+using Helper.Methods;
+using K205Oleev.Areas.admin.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Services;
 
 namespace K205Oleev.Areas.admin.Controllers
 {
     [Area("admin")]
+    [Authorize]
     public class AboutController : Controller
     {
-        private readonly OleevDbContext _context;
+        private readonly AboutServices _services;
 
-        public AboutController(OleevDbContext context)
+        public AboutController(AboutServices services)
         {
-            _context = context;
+            _services = services;
         }
 
         public IActionResult Index()
         {
-            var about = _context.AboutLanguages.Include(x=>x.About).Where(x=>x.LangCode=="AZ").ToList();
+          var about = _services.GetAll();
+            
             return View(about);
         }
 
@@ -33,32 +37,11 @@ namespace K205Oleev.Areas.admin.Controllers
         [HttpPost]
         public IActionResult Create(List<string> Title, List<string> Description, List<string> LangCode, List<string> SEO, string PhotoURL)
         {
-            About about = new()
-            {
-                PhotoURL = PhotoURL,
-                CreatedDate = DateTime.Now,
-            };
 
-            _context.Abouts.Add(about);
-            _context.SaveChanges();
-            for (int i = 0; i < Description.Count; i++)
+            for (int i = 0; i < Title.Count; i++)
             {
-                AboutLanguage aboutLanguage = new()
-                {
-                    Title = Title[i],
-                    Description = Description[i],
-                    LangCode = LangCode[i],
-                    SEO = SEO[i],
-                    AboutID = about.ID
-                };
-                _context.AboutLanguages.Add(aboutLanguage);
-
+                _services.CreateAbout(Title[i], Description[i], LangCode[i], SEO[i], PhotoURL);
             }
-
-
-            _context.SaveChanges();
-
-
 
 
             return RedirectToAction(nameof(Index));
@@ -67,37 +50,37 @@ namespace K205Oleev.Areas.admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            EditVM editVM = new()
-            {
-                AboutLanguages = _context.AboutLanguages.Include(x => x.About).Where(x => x.AboutID == id).ToList(),
-                About = _context.Abouts.FirstOrDefault(x => x.ID == id.Value)
-            };
+            //EditVM editVM = new()
+            //{
+            //    AboutLanguages = _context.AboutLanguages.Include(x => x.About).Where(x => x.AboutID == id).ToList(),
+            //    About = _context.Abouts.FirstOrDefault(x => x.ID == id.Value)
+            //};
 
 
-            return View(editVM);
+            //return View(editVM);
+            return null;
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(int AboutID,List<int> LangID, List<string> Title, List<string> Description, List<string> LangCode)
         {
-            for (int i = 0; i < Title.Count; i++)
-            {
-                SEO seo = new();
+            //for (int i = 0; i < Title.Count; i++)
+            //{
+            //    SEO seo = new();
 
-                AboutLanguage aboutLanguage = new()
-                {
-
-                    ID = LangID[i],
-                    Title = Title[i],
-                    Description=Description[i],
-                    SEO = seo.SeoURL(Title[i]),
-                    LangCode = LangCode[i],
-                    AboutID = AboutID
-                };
-                var updatedEntity = _context.Entry(aboutLanguage);
-                updatedEntity.State = EntityState.Modified;
-            }
-                _context.SaveChanges();
+            //    AboutLanguage aboutLanguage = new()
+            //    {
+            //        ID = LangID[i],
+            //        Title = Title[i],
+            //        Description=Description[i],
+            //        SEO = seo.SeoURL(Title[i]),
+            //        LangCode = LangCode[i],
+            //        AboutID = AboutID
+            //    };
+            //    var updatedEntity = _context.Entry(aboutLanguage);
+            //    updatedEntity.State = EntityState.Modified;
+            //}
+            //    _context.SaveChanges();
 
 
             return RedirectToAction(nameof(Index));

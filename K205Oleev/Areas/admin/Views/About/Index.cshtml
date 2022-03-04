@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<AboutLanguage>
 
-    
+
 
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
@@ -14,8 +14,9 @@
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
-                        <th>Photo</th> 
-                                            
+                        <th>Seo</th>
+                        <th>Photo</th>
+
                         <th> </th>
                     </tr>
                 </thead>
@@ -23,8 +24,9 @@
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
+                        <th>Seo</th>
                         <th>Photo</th>
-                                           
+
                         <th> </th>
                     </tr>
                 </tfoot>
@@ -34,18 +36,18 @@
                         <tr>
                             <td>@item.Title</td>
                             <td>@Html.Raw(item.Description)</td>
+                            <td>@item.SEO</td>
                             <td>
                                 <img width="100" src="@item.About.PhotoURL" />
-                            </td>       
-                                                
+                            </td>
                             <td>
                                 <a href="/admin/about/detail/@item.About.ID" class="btn btn-warning">Detail</a>
                                 <a href="/admin/about/edit/@item.About.ID" class="btn btn-warning">Edit</a>
                             </td>
                         </tr>
                     }
-                                        
-                                
+
+
                 </tbody>
             </table>
         </div>

@@ -3,19 +3,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace K205Oleev.Migrations
+namespace DataAccess.Migrations
 {
-    public partial class NewLang : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Description",
-                table: "Infos");
-
-            migrationBuilder.DropColumn(
-                name: "Title",
-                table: "Infos");
+            migrationBuilder.CreateTable(
+                name: "Abouts",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PhotoURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Abouts", x => x.ID);
+                });
 
             migrationBuilder.CreateTable(
                 name: "CountDowns",
@@ -32,26 +38,19 @@ namespace K205Oleev.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InfoLanguages",
+                name: "Infos",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LangCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InfoID = table.Column<int>(type: "int", nullable: false),
+                    PhotoURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsHeader = table.Column<bool>(type: "bit", nullable: false),
+                    IsSlider = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InfoLanguages", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_InfoLanguages_Infos_InfoID",
-                        column: x => x.InfoID,
-                        principalTable: "Infos",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Infos", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,6 +66,30 @@ namespace K205Oleev.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OurServices", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AboutLanguages",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LangCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SEO = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AboutID = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AboutLanguages", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_AboutLanguages_Abouts_AboutID",
+                        column: x => x.AboutID,
+                        principalTable: "Abouts",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,6 +115,30 @@ namespace K205Oleev.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "InfoLanguages",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LangCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SEO = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InfoID = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InfoLanguages", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_InfoLanguages_Infos_InfoID",
+                        column: x => x.InfoID,
+                        principalTable: "Infos",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OurServiceLanguages",
                 columns: table => new
                 {
@@ -100,6 +147,7 @@ namespace K205Oleev.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LangCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SEO = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OurServiceID = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -113,6 +161,11 @@ namespace K205Oleev.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AboutLanguages_AboutID",
+                table: "AboutLanguages",
+                column: "AboutID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CountDownLanguages_CountDownID",
@@ -133,6 +186,9 @@ namespace K205Oleev.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AboutLanguages");
+
+            migrationBuilder.DropTable(
                 name: "CountDownLanguages");
 
             migrationBuilder.DropTable(
@@ -142,24 +198,16 @@ namespace K205Oleev.Migrations
                 name: "OurServiceLanguages");
 
             migrationBuilder.DropTable(
+                name: "Abouts");
+
+            migrationBuilder.DropTable(
                 name: "CountDowns");
 
             migrationBuilder.DropTable(
+                name: "Infos");
+
+            migrationBuilder.DropTable(
                 name: "OurServices");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Description",
-                table: "Infos",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Title",
-                table: "Infos",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
         }
     }
 }

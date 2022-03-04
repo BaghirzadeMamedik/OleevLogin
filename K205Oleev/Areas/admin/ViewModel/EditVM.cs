@@ -1,4 +1,6 @@
-﻿using Entities;
+﻿
+
+using Entities;
 
 namespace K205Oleev.Areas.admin.ViewModel
 {
